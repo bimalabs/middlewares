@@ -8,7 +8,7 @@ import (
 )
 
 func Test_Helmet(t *testing.T) {
-	middleware := Helmet{}
+	middleware := middleware{}
 
 	req := httptest.NewRequest("GET", "http://bima.framework/foo", nil)
 	w := httptest.NewRecorder()

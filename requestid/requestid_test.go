@@ -9,8 +9,8 @@ import (
 )
 
 func Test_RequestIDHeader_Without_Logger(t *testing.T) {
-	middleware := RequestID{
-		RequestIDHeader: "X-Request-ID",
+	middleware := requestID{
+		header: "X-Request-ID",
 	}
 
 	req := httptest.NewRequest("GET", "http://bima.framework/foo", nil)
@@ -21,8 +21,8 @@ func Test_RequestIDHeader_Without_Logger(t *testing.T) {
 }
 
 func Test_RequestIDHeader_With_Logger(t *testing.T) {
-	middleware := RequestID{
-		RequestIDHeader: "X-Request-ID",
+	middleware := requestID{
+		header: "X-Request-ID",
 	}
 
 	loggers.Default("test")

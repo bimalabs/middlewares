@@ -9,7 +9,7 @@ import (
 )
 
 func Test_Cors(t *testing.T) {
-	middleware := Cors{Options: cors.Options{}}
+	middleware := middleware{options: cors.Options{}}
 
 	req := httptest.NewRequest("GET", "http://bima.framework/foo", nil)
 	w := httptest.NewRecorder()

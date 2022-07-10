@@ -3,13 +3,18 @@ package helmet
 import (
 	"net/http"
 
+	"github.com/bimalabs/framework/v4/middlewares"
 	"github.com/goddtriffin/helmet"
 )
 
-type Helmet struct {
+type middleware struct {
 }
 
-func (h *Helmet) Attach(_ *http.Request, response http.ResponseWriter) bool {
+func New() middlewares.Middleware {
+	return &middleware{}
+}
+
+func (h *middleware) Attach(_ *http.Request, response http.ResponseWriter) bool {
 	helmet := helmet.Default()
 
 	helmet.ContentSecurityPolicy.Header(response)
@@ -28,6 +33,6 @@ func (h *Helmet) Attach(_ *http.Request, response http.ResponseWriter) bool {
 	return false
 }
 
-func (h *Helmet) Priority() int {
+func (h *middleware) Priority() int {
 	return -255
 }

@@ -8,22 +8,32 @@ import (
 
 	"github.com/bimalabs/framework/v4/configs"
 	"github.com/bimalabs/framework/v4/loggers"
-	"github.com/bimalabs/framework/v4/utils"
+	"github.com/bimalabs/framework/v4/middlewares"
 )
 
-type Jwt struct {
-	Debug         bool
-	Secret        string
-	SigningMethod string
-	Whitelist     string
-	Env           *configs.Env
+type middleware struct {
+	debug         bool
+	secret        string
+	signingMethod string
+	whitelist     string
+	env           *configs.Env
 }
 
-func (j *Jwt) Attach(request *http.Request, response http.ResponseWriter) bool {
+func NewJwt(env *configs.Env, signingMethod string, whitelist string) middlewares.Middleware {
+	return &middleware{
+		debug:         env.Debug,
+		secret:        env.Secret,
+		env:           env,
+		signingMethod: signingMethod,
+		whitelist:     whitelist,
+	}
+}
+
+func (j *middleware) Attach(request *http.Request, response http.ResponseWriter) bool {
 	ctx := context.WithValue(context.Background(), "scope", "jwt_middleware")
-	match, _ := regexp.MatchString(j.Whitelist, request.RequestURI)
+	match, _ := regexp.MatchString(j.whitelist, request.RequestURI)
 	if match {
-		if j.Debug {
+		if j.debug {
 			var log strings.Builder
 			log.WriteString("whitelisting url ")
 			log.WriteString(request.RequestURI)
@@ -42,7 +52,7 @@ func (j *Jwt) Attach(request *http.Request, response http.ResponseWriter) bool {
 		return true
 	}
 
-	claims, err := utils.ValidateToken(j.Secret, j.SigningMethod, strings.TrimSpace(bearerToken[1]))
+	claims, err := validateToken(j.secret, j.signingMethod, strings.TrimSpace(bearerToken[1]))
 	if err != nil {
 		loggers.Logger.Error(ctx, err.Error())
 		http.Error(response, "unauthorization", http.StatusUnauthorized)
@@ -51,8 +61,8 @@ func (j *Jwt) Attach(request *http.Request, response http.ResponseWriter) bool {
 	}
 
 	if user, ok := claims["user"]; ok {
-		j.Env.User = user.(string)
-		request.Header.Add("X-Bima-User", j.Env.User)
+		j.env.User = user.(string)
+		request.Header.Add("X-Bima-User", j.env.User)
 
 		return false
 	}
@@ -63,6 +73,6 @@ func (j *Jwt) Attach(request *http.Request, response http.ResponseWriter) bool {
 	return true
 }
 
-func (j *Jwt) Priority() int {
+func (j *middleware) Priority() int {
 	return 257
 }

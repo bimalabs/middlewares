@@ -5,17 +5,24 @@ import (
 	"net/http"
 
 	"github.com/bimalabs/framework/v4/loggers"
+	"github.com/bimalabs/framework/v4/middlewares"
 )
 
 type (
-	BasicAuth struct {
-		Validator ValidateUsernameAndPassword
+	basicAuth struct {
+		validator ValidateUsernameAndPassword
 	}
 
 	ValidateUsernameAndPassword func(username string, password string) bool
 )
 
-func (b *BasicAuth) Attach(request *http.Request, response http.ResponseWriter) bool {
+func New(validator ValidateUsernameAndPassword) middlewares.Middleware {
+	return &basicAuth{
+		validator: validator,
+	}
+}
+
+func (b *basicAuth) Attach(request *http.Request, response http.ResponseWriter) bool {
 	ctx := context.WithValue(context.Background(), "scope", "basic_auth_middleware")
 	username, password, ok := request.BasicAuth()
 	if !ok {
@@ -25,7 +32,7 @@ func (b *BasicAuth) Attach(request *http.Request, response http.ResponseWriter) 
 		return true
 	}
 
-	if !b.Validator(username, password) {
+	if !b.validator(username, password) {
 		loggers.Logger.Error(ctx, "invalid username or password")
 		http.Error(response, "invalid username or password", http.StatusUnauthorized)
 
@@ -35,6 +42,6 @@ func (b *BasicAuth) Attach(request *http.Request, response http.ResponseWriter) 
 	return false
 }
 
-func (b *BasicAuth) Priority() int {
+func (b *basicAuth) Priority() int {
 	return 257
 }

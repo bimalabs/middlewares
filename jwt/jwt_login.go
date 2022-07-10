@@ -6,14 +6,14 @@ import (
 
 	"github.com/bimalabs/framework/v4/loggers"
 	"github.com/bimalabs/framework/v4/middlewares"
-	"github.com/bimalabs/framework/v4/utils"
+	"github.com/bimalabs/framework/v4/routes"
 	"github.com/goccy/go-json"
 	"github.com/golang-jwt/jwt/v4"
 	"google.golang.org/grpc"
 )
 
 type (
-	JwtLogin struct {
+	jwtLogin struct {
 		PathUrl       string
 		UserField     string
 		PasswordField string
@@ -36,8 +36,8 @@ func NewJwtLogin(
 	expire int,
 	refreshToken bool,
 	findUser FindUserByUsernameAndPassword,
-) *JwtLogin {
-	return &JwtLogin{
+) routes.Route {
+	return &jwtLogin{
 		PathUrl:       path,
 		Secret:        secret,
 		SigningMethod: signingMethod,
@@ -49,25 +49,25 @@ func NewJwtLogin(
 	}
 }
 
-func DefaultJwtLogin(path string, secret string, signingMethod string, refreshToken bool, findUser FindUserByUsernameAndPassword) *JwtLogin {
+func DefaultJwtLogin(path string, secret string, signingMethod string, refreshToken bool, findUser FindUserByUsernameAndPassword) routes.Route {
 	return NewJwtLogin(path, "username", "password", secret, signingMethod, 2, refreshToken, findUser)
 }
 
-func (j *JwtLogin) Path() string {
+func (j *jwtLogin) Path() string {
 	return j.PathUrl
 }
 
-func (j *JwtLogin) Method() string {
+func (j *jwtLogin) Method() string {
 	return http.MethodPost
 }
 
-func (j *JwtLogin) SetClient(client *grpc.ClientConn) {}
+func (j *jwtLogin) SetClient(client *grpc.ClientConn) {}
 
-func (j *JwtLogin) Middlewares() []middlewares.Middleware {
+func (j *jwtLogin) Middlewares() []middlewares.Middleware {
 	return nil
 }
 
-func (j *JwtLogin) Handle(w http.ResponseWriter, r *http.Request, _ map[string]string) {
+func (j *jwtLogin) Handle(w http.ResponseWriter, r *http.Request, _ map[string]string) {
 	ctx := context.WithValue(context.Background(), "scope", "jwt_login")
 	user := map[string]string{}
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -105,10 +105,10 @@ func (j *JwtLogin) Handle(w http.ResponseWriter, r *http.Request, _ map[string]s
 	}
 
 	payload := map[string]string{}
-	token, _ := utils.CreateToken(j.Secret, j.SigningMethod, claims, j.Expire)
+	token, _ := createToken(j.Secret, j.SigningMethod, claims, j.Expire)
 	payload["token"] = token
 	if j.RefreshToken {
-		refreshToken, _ := utils.CreateRefreshToken(j.Secret, j.SigningMethod, token)
+		refreshToken, _ := createRefreshToken(j.Secret, j.SigningMethod, token)
 		payload["refresh_token"] = refreshToken
 	}
 

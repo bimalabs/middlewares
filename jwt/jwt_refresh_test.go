@@ -23,12 +23,7 @@ func Test_Jwt_Refresh_Invalid_Payload(t *testing.T) {
 	endpoint := "0.0.0.0:111"
 	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithInsecure())
 
-	route := JwtRefresh{
-		PathUrl:       "/refresh",
-		Secret:        "secret",
-		SigningMethod: jwt.SigningMethodHS512.Name,
-		Expire:        730,
-	}
+	route := NewJwtRefresh("/refresh", "secret", jwt.SigningMethodHS512.Name, 730)
 	route.SetClient(conn)
 
 	req := httptest.NewRequest("POST", "http://bima.framework/refresh", nil)
@@ -83,12 +78,7 @@ func Test_Jwt_Refresh_Valid_Payload(t *testing.T) {
 	endpoint := "0.0.0.0:111"
 	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithInsecure())
 
-	route := JwtRefresh{
-		PathUrl:       "/refresh",
-		Secret:        "secret",
-		SigningMethod: jwt.SigningMethodHS512.Name,
-		Expire:        730,
-	}
+	route := NewJwtRefresh("/refresh", "secret", jwt.SigningMethodHS512.Name, 730)
 	route.SetClient(conn)
 
 	claims := jwt.MapClaims{

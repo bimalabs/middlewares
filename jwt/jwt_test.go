@@ -16,13 +16,9 @@ func Test_Jwt(t *testing.T) {
 	loggers.Default("test")
 
 	config := &configs.Env{}
-	middleware := Jwt{
-		Debug:         true,
-		Secret:        "secret",
-		SigningMethod: jwt.SigningMethodHS512.Name,
-		Env:           config,
-		Whitelist:     "/bar",
-	}
+	config.Debug = true
+	config.Secret = "secret"
+	middleware := NewJwt(config, jwt.SigningMethodHS512.Name, "/bar")
 
 	req := httptest.NewRequest("POST", "http://bima.framework/foo", nil)
 	w := httptest.NewRecorder()
@@ -47,7 +43,7 @@ func Test_Jwt(t *testing.T) {
 		"id": "test",
 	}
 
-	token, err := utils.CreateToken(middleware.Secret, middleware.SigningMethod, claims, 2)
+	token, err := utils.CreateToken(config.Secret, jwt.SigningMethodHS512.Name, claims, 2)
 
 	assert.Nil(t, err)
 
@@ -63,7 +59,7 @@ func Test_Jwt(t *testing.T) {
 		"user": "test",
 	}
 
-	token, err = utils.CreateToken(middleware.Secret, middleware.SigningMethod, claims, 2)
+	token, err = utils.CreateToken(config.Secret, jwt.SigningMethodHS512.Name, claims, 2)
 
 	assert.Nil(t, err)
 

@@ -3,20 +3,27 @@ package cors
 import (
 	"net/http"
 
+	"github.com/bimalabs/framework/v4/middlewares"
 	"github.com/rs/cors"
 )
 
-type Cors struct {
-	Options cors.Options
+type middleware struct {
+	options cors.Options
 }
 
-func (c *Cors) Attach(request *http.Request, response http.ResponseWriter) bool {
-	handler := cors.New(c.Options)
+func New(options cors.Options) middlewares.Middleware {
+	return &middleware{
+		options: options,
+	}
+}
+
+func (c *middleware) Attach(request *http.Request, response http.ResponseWriter) bool {
+	handler := cors.New(c.options)
 	handler.HandlerFunc(response, request)
 
 	return false
 }
 
-func (c *Cors) Priority() int {
+func (c *middleware) Priority() int {
 	return -255
 }
