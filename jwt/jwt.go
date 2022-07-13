@@ -52,7 +52,7 @@ func (j *middleware) Attach(request *http.Request, response http.ResponseWriter)
 		return true
 	}
 
-	claims, err := validateToken(j.secret, j.signingMethod, strings.TrimSpace(bearerToken[1]))
+	claims, err := ValidateToken(j.secret, j.signingMethod, strings.TrimSpace(bearerToken[1]))
 	if err != nil {
 		loggers.Logger.Error(ctx, err.Error())
 		http.Error(response, "unauthorization", http.StatusUnauthorized)

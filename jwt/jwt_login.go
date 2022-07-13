@@ -105,10 +105,10 @@ func (j *jwtLogin) Handle(w http.ResponseWriter, r *http.Request, _ map[string]s
 	}
 
 	payload := map[string]string{}
-	token, _ := createToken(j.Secret, j.SigningMethod, claims, j.Expire)
+	token, _ := CreateToken(j.Secret, j.SigningMethod, claims, j.Expire)
 	payload["token"] = token
 	if j.RefreshToken {
-		refreshToken, _ := createRefreshToken(j.Secret, j.SigningMethod, token)
+		refreshToken, _ := CreateRefreshToken(j.Secret, j.SigningMethod, token)
 		payload["refresh_token"] = refreshToken
 	}
 

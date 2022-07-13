@@ -61,7 +61,7 @@ func (j *jwtRefresh) Handle(w http.ResponseWriter, r *http.Request, _ map[string
 		return
 	}
 
-	claims, err := validateRefreshToken(j.secret, j.signingMethod, token)
+	claims, err := ValidateRefreshToken(j.secret, j.signingMethod, token)
 	if err != nil {
 		loggers.Logger.Error(ctx, err.Error())
 		http.Error(w, "invalid token", http.StatusBadRequest)
@@ -69,8 +69,8 @@ func (j *jwtRefresh) Handle(w http.ResponseWriter, r *http.Request, _ map[string
 		return
 	}
 
-	token, _ = createToken(j.secret, j.signingMethod, claims, j.expire)
-	refreshToken, _ := createRefreshToken(j.secret, j.signingMethod, token)
+	token, _ = CreateToken(j.secret, j.signingMethod, claims, j.expire)
+	refreshToken, _ := CreateRefreshToken(j.secret, j.signingMethod, token)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"token": token, "refresh_token": refreshToken})
