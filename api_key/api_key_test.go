@@ -11,7 +11,9 @@ import (
 func Test_Api_Key(t *testing.T) {
 	loggers.Default("test")
 	middleware := apiKeyAuth{
-		key:         "test",
+		validator: func(apiKey string) bool {
+			return false
+		},
 		keyLocation: LocationQueries,
 		keyName:     "api",
 	}
@@ -23,7 +25,9 @@ func Test_Api_Key(t *testing.T) {
 	assert.Equal(t, true, middleware.Attach(req, w))
 
 	middleware = apiKeyAuth{
-		key:         "test",
+		validator: func(apiKey string) bool {
+			return "test" == apiKey
+		},
 		keyLocation: LocationQueries,
 		keyName:     "api",
 	}
@@ -35,7 +39,9 @@ func Test_Api_Key(t *testing.T) {
 	assert.Equal(t, true, middleware.Attach(req, w))
 
 	middleware = apiKeyAuth{
-		key:         "test",
+		validator: func(apiKey string) bool {
+			return "test" == apiKey
+		},
 		keyLocation: LocationQueries,
 		keyName:     "api",
 	}
@@ -47,7 +53,9 @@ func Test_Api_Key(t *testing.T) {
 	assert.Equal(t, false, middleware.Attach(req, w))
 
 	middleware = apiKeyAuth{
-		key:         "test",
+		validator: func(apiKey string) bool {
+			return "test" == apiKey
+		},
 		keyLocation: LocationHeader,
 		keyName:     "Api-Key",
 	}

@@ -13,14 +13,24 @@ const (
 	LocationQueries = "query"
 )
 
-type apiKeyAuth struct {
-	key         string
-	keyLocation string
-	keyName     string
-}
+type (
+	apiKeyAuth struct {
+		validator   ValidateApiKey
+		keyLocation string
+		keyName     string
+	}
+
+	ValidateApiKey func(apiKey string) bool
+)
 
 func New(location string, name string, key string) middlewares.Middleware {
-	return &apiKeyAuth{key: key, keyLocation: location, keyName: name}
+	return &apiKeyAuth{validator: func(apiKey string) bool {
+		return key == apiKey
+	}, keyLocation: location, keyName: name}
+}
+
+func NewStorage(location string, name string, validator ValidateApiKey) middlewares.Middleware {
+	return &apiKeyAuth{validator: validator, keyLocation: location, keyName: name}
 }
 
 func (a *apiKeyAuth) Attach(request *http.Request, response http.ResponseWriter) bool {
@@ -34,7 +44,7 @@ func (a *apiKeyAuth) Attach(request *http.Request, response http.ResponseWriter)
 		key = request.URL.Query().Get(a.keyName)
 	}
 
-	if key != a.key {
+	if !a.validator(key) {
 		loggers.Logger.Error(ctx, "invalid api key")
 		http.Error(response, "invalid api key", http.StatusUnauthorized)
 
