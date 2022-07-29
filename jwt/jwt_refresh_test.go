@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/bimalabs/framework/v4/loggers"
-	"github.com/bimalabs/framework/v4/utils"
 	"github.com/goccy/go-json"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
@@ -84,10 +83,10 @@ func Test_Jwt_Refresh_Valid_Payload(t *testing.T) {
 	claims := jwt.MapClaims{
 		"user": "test",
 	}
-	token, err := utils.CreateToken("secret", jwt.SigningMethodHS512.Name, claims, 2)
+	token, err := CreateToken("secret", jwt.SigningMethodHS512.Name, claims, 2)
 	assert.Nil(t, err)
 
-	refreshToken, err := utils.CreateRefreshToken("secret", jwt.SigningMethodHS512.Name, token)
+	refreshToken, err := CreateRefreshToken("secret", jwt.SigningMethodHS512.Name, token)
 	assert.Nil(t, err)
 
 	payload := map[string]string{

@@ -7,7 +7,6 @@ import (
 
 	"github.com/bimalabs/framework/v4/configs"
 	"github.com/bimalabs/framework/v4/loggers"
-	"github.com/bimalabs/framework/v4/utils"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
 )
@@ -43,7 +42,7 @@ func Test_Jwt(t *testing.T) {
 		"id": "test",
 	}
 
-	token, err := utils.CreateToken(config.Secret, jwt.SigningMethodHS512.Name, claims, 2)
+	token, err := CreateToken(config.Secret, jwt.SigningMethodHS512.Name, claims, 2)
 
 	assert.Nil(t, err)
 
@@ -59,7 +58,7 @@ func Test_Jwt(t *testing.T) {
 		"user": "test",
 	}
 
-	token, err = utils.CreateToken(config.Secret, jwt.SigningMethodHS512.Name, claims, 2)
+	token, err = CreateToken(config.Secret, jwt.SigningMethodHS512.Name, claims, 2)
 
 	assert.Nil(t, err)
 

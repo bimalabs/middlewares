@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Basic_Atuh_Invalid_Basic_Auth(t *testing.T) {
+func Test_Basic_Auth(t *testing.T) {
 	loggers.Default("test")
 	middleware := basicAuth{
 		validator: func(username, password string) bool {
