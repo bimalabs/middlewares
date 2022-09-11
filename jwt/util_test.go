@@ -45,10 +45,13 @@ func Test_Refresh_Jwt(t *testing.T) {
 
 	token, err := CreateToken("secret", jwt.SigningMethodHS512.Name, claims, 2)
 
+	assert.Nil(t, err)
+	assert.NotNil(t, token)
+
 	refreshToken, err := CreateRefreshToken("secret", jwt.SigningMethodHS512.Name, token)
 
 	assert.Nil(t, err)
-	assert.NotNil(t, token)
+	assert.NotNil(t, refreshToken)
 
 	_, err = ValidateRefreshToken("secret", "invalid", refreshToken)
 	assert.NotNil(t, err)

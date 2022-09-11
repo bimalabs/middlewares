@@ -68,7 +68,7 @@ func (j *jwtLogin) Middlewares() []middlewares.Middleware {
 }
 
 func (j *jwtLogin) Handle(w http.ResponseWriter, r *http.Request, _ map[string]string) {
-	ctx := context.WithValue(context.Background(), "scope", "jwt_login")
+	ctx := context.WithValue(context.Background(), loggers.ScopeKey, "jwt_login")
 	user := map[string]string{}
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -113,5 +113,5 @@ func (j *jwtLogin) Handle(w http.ResponseWriter, r *http.Request, _ map[string]s
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(payload)
+	_ = json.NewEncoder(w).Encode(payload)
 }

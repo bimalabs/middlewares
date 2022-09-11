@@ -23,7 +23,7 @@ func New(validator ValidateUsernameAndPassword) middlewares.Middleware {
 }
 
 func (b *basicAuth) Attach(request *http.Request, response http.ResponseWriter) bool {
-	ctx := context.WithValue(context.Background(), "scope", "basic_auth_middleware")
+	ctx := context.WithValue(context.Background(), loggers.ScopeKey, "basic_auth_middleware")
 	username, password, ok := request.BasicAuth()
 	if !ok {
 		loggers.Logger.Error(ctx, "error parsing basic auth")

@@ -12,6 +12,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func Test_Jwt_Refresh_Invalid_Payload(t *testing.T) {
@@ -20,7 +21,7 @@ func Test_Jwt_Refresh_Invalid_Payload(t *testing.T) {
 	defer cancel()
 
 	endpoint := "0.0.0.0:111"
-	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithInsecure())
+	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	route := NewJwtRefresh("/refresh", "secret", jwt.SigningMethodHS512.Name, 730)
 	route.SetClient(conn)
@@ -75,7 +76,7 @@ func Test_Jwt_Refresh_Valid_Payload(t *testing.T) {
 	defer cancel()
 
 	endpoint := "0.0.0.0:111"
-	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithInsecure())
+	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	route := NewJwtRefresh("/refresh", "secret", jwt.SigningMethodHS512.Name, 730)
 	route.SetClient(conn)

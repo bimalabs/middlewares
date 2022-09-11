@@ -43,7 +43,7 @@ func (j *jwtRefresh) Middlewares() []middlewares.Middleware {
 }
 
 func (j *jwtRefresh) Handle(w http.ResponseWriter, r *http.Request, _ map[string]string) {
-	ctx := context.WithValue(context.Background(), "scope", "jwt_refresh_token")
+	ctx := context.WithValue(context.Background(), loggers.ScopeKey, "jwt_refresh_token")
 	body := map[string]string{}
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
@@ -73,5 +73,5 @@ func (j *jwtRefresh) Handle(w http.ResponseWriter, r *http.Request, _ map[string
 	refreshToken, _ := CreateRefreshToken(j.secret, j.signingMethod, token)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"token": token, "refresh_token": refreshToken})
+	_ = json.NewEncoder(w).Encode(map[string]string{"token": token, "refresh_token": refreshToken})
 }

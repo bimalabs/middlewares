@@ -30,7 +30,7 @@ func NewJwt(env *configs.Env, signingMethod string, whitelist string) middleware
 }
 
 func (j *middleware) Attach(request *http.Request, response http.ResponseWriter) bool {
-	ctx := context.WithValue(context.Background(), "scope", "jwt_middleware")
+	ctx := context.WithValue(context.Background(), loggers.ScopeKey, "jwt_middleware")
 	match, _ := regexp.MatchString(j.whitelist, request.RequestURI)
 	if match {
 		if j.debug {

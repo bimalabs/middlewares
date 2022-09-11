@@ -34,7 +34,7 @@ func NewStorage(location string, name string, validator ValidateApiKey) middlewa
 }
 
 func (a *apiKeyAuth) Attach(request *http.Request, response http.ResponseWriter) bool {
-	ctx := context.WithValue(context.Background(), "scope", "api_key_auth_middleware")
+	ctx := context.WithValue(context.Background(), loggers.ScopeKey, "api_key_auth_middleware")
 	var key string
 	if a.keyLocation == LocationHeader {
 		key = request.Header.Get(a.keyName)

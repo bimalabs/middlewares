@@ -12,6 +12,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func Test_Jwt_Login_Invalid_Payload(t *testing.T) {
@@ -20,7 +21,7 @@ func Test_Jwt_Login_Invalid_Payload(t *testing.T) {
 	defer cancel()
 
 	endpoint := "0.0.0.0:111"
-	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithInsecure())
+	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	route := DefaultJwtLogin("/login", "secret", jwt.SigningMethodHS512.Name, false, FindUserByUsernameAndPassword(func(username, password string) jwt.MapClaims {
 		return jwt.MapClaims{
@@ -94,7 +95,7 @@ func Test_Jwt_Login_Valid_Payload(t *testing.T) {
 	defer cancel()
 
 	endpoint := "0.0.0.0:111"
-	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithInsecure())
+	conn, _ := grpc.DialContext(ctx, endpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	route := DefaultJwtLogin("/login", "secret", jwt.SigningMethodHS512.Name, false, FindUserByUsernameAndPassword(func(username, password string) jwt.MapClaims {
 		return jwt.MapClaims{
